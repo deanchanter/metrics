@@ -1,21 +1,25 @@
 """This is simple simulation script that gives the user a way to generate sample 
 data for development of agile metrics in other enviroments.
 
-The core (of will be func'ed out in the future) is a simulation of picking 
-Red and Black cards to decided if a item can make progress.  At the end of 
-100 "days" it writes and CSV and to the clipboard. It also creates simple 
+The core (of will be func'ed out in the future) is a simulation of 
+picking  Red and Black cards to decided if a item can make progress.  
+At the end of 100 "days" it writes CSV. It also creates simple 
 plot to show what a cycle time and throughput chart might look like.
 """
 
-# Python code for 1-D random walk.
-# import random
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# - Item is such a generic name, try avoid it and come up with a name what item is
+# - Do not write to clipboard, maybe  ause had some thign usefule there
+# - Do not leave commented code, delete it
+
+ 
+# repeatable results
+np.random.seed(45)
 
 days = 100
-
 
 # Data Frame indexed by "item"
 all_items = pd.DataFrame(0, index=range(days), columns=["Start_Day", "End_Day"])
@@ -24,21 +28,30 @@ all_items = pd.DataFrame(0, index=range(days), columns=["Start_Day", "End_Day"])
 all_items["Start_Day"][0] = 1
 next_item_to_start = 1
 next_item_to_end = 0
-wip = 1
 
-# This is a huge control  see WIPStudy to see why I picked 3
+# EP: the comment is not too useful
+# This is a huge control see WIPStudy to see why I picked 3
 wipLimit = 3
-
-# repeatable results
-np.random.seed(45)  # 23,45,10
 
 # TODO : func this for use in WIPStudy and others.
 
-for day in range(days):
-    # same odds as a deck of cards: black = no progress (start something ) new
-    # red = finish something (This is the same logic as a 1 person 1 WIP Featureban)
+wip = 1
 
-    br = np.random.choice(["b", "r"])
+
+def get_card():
+    # TODO: rewrite docstring - what func returns and what it means
+    """
+    # same odds as a deck of cards: 
+    # black = no progress (start something) new
+    # red = finish something 
+    # (This is the same logic as a 1 person 1 WIP Featureban)
+    """    
+    return np.random.choice(["b", "r"])
+
+
+for day in range(days):
+
+    br = get_card()
 
     if br == "r" and wip > 0:
         all_items["End_Day"][next_item_to_end] = day + 1
@@ -56,7 +69,6 @@ for day in range(days):
 
 # dump master to CSV/Clipboard
 all_items.to_csv("randomSample")
-all_items.to_clipboard()
 
 
 # Build a Cycle Time Slice (End Day - Start Day for each Item/Index)

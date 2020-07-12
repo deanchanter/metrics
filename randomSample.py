@@ -1,5 +1,5 @@
-"""This is simple simulation script that gives the user a way to generate sample 
-data for development of agile metrics in other enviroments.
+"""This is simple simulation script that gives the user a way to 
+generate sample data for development of agile metrics in other enviroments.
 
 The core (of will be func'ed out in the future) is a simulation of 
 picking  Red and Black cards to decided if a item can make progress.  
@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Ideas/recommendations:
 # - Item is such a generic name, try avoid it and come up with a name what item is
 # - Do not write to clipboard, maybe  ause had some thign usefule there
 # - Do not leave commented code, delete it
@@ -26,6 +27,8 @@ all_items = pd.DataFrame(0, index=range(days), columns=["Start_Day", "End_Day"])
 
 # Item 0 Day 1
 all_items["Start_Day"][0] = 1
+
+# Question-EP: what do these variables do?
 next_item_to_start = 1
 next_item_to_end = 0
 
@@ -48,6 +51,10 @@ def get_card():
     """    
     return np.random.choice(["b", "r"])
 
+# Question-EP: is it correct you draw one "card" each day?
+#              what is the algorightm/rules you apply next?
+#              what happens if card is "b" and wip > 3?
+events = [get_card() for _ in range(days)]
 
 for day in range(days):
 

@@ -15,66 +15,50 @@ import pandas as pd
 # - Item is such a generic name, try avoid it and come up with a name what item is
 # - Do not write to clipboard, maybe  ause had some thign usefule there
 # - Do not leave commented code, delete it
-
- 
-# repeatable results
-np.random.seed(45)
-
-days = 100
-
-# Data Frame indexed by "item"
-all_items = pd.DataFrame(0, index=range(days), columns=["Start_Day", "End_Day"])
-
-# Item 0 Day 1
-all_items["Start_Day"][0] = 1
-
-# Question-EP: what do these variables do?
-next_item_to_start = 1
-next_item_to_end = 0
-
-# EP: the comment is not too useful
-# This is a huge control see WIPStudy to see why I picked 3
-wipLimit = 3
-
-# TODO : func this for use in WIPStudy and others.
-
-wip = 1
+# - Try not to mix zero-based days transform and increase operation
 
 
-def get_card():
+def get_cards(days: int):
     # TODO: rewrite docstring - what func returns and what it means
     """
     # same odds as a deck of cards: 
     # black = no progress (start something) new
     # red = finish something 
     # (This is the same logic as a 1 person 1 WIP Featureban)
-    """    
-    return np.random.choice(["b", "r"])
-
-# Question-EP: is it correct you draw one "card" each day?
-#              what is the algorightm/rules you apply next?
-#              what happens if card is "b" and wip > 3?
-events = [get_card() for _ in range(days)]
-
-for day in range(days):
-
-    br = get_card()
-
-    if br == "r" and wip > 0:
-        all_items["End_Day"][next_item_to_end] = day + 1
-        wip = wip - 1
-        next_item_to_end = next_item_to_end + 1
-
-    elif br == "b" and wip < wipLimit:
-        all_items["Start_Day"][next_item_to_start] = day + 1
-        wip = wip + 1
-        next_item_to_start = next_item_to_start + 1
-
-    else:
-        wip = wip
+    """
+    return [np.random.choice(["b", "r"]) for _ in range(days)]
 
 
-# dump master to CSV/Clipboard
+def fill_start_end(cards, wipLimit=3):
+    next_item_to_start = 0
+    next_item_to_end = 0
+    wip = 0
+    all_items = pd.DataFrame(
+        -1, index=range(len(cards)), columns=["Start_Day", "End_Day"]
+    )
+    for day, card in enumerate(cards):
+        if card == "r" and wip > 0:
+            all_items["End_Day"][next_item_to_end] = day
+            wip = wip - 1
+            next_item_to_end = next_item_to_end + 1
+        elif card == "b" and wip < wipLimit:
+            all_items["Start_Day"][next_item_to_start] = day
+            wip = wip + 1
+            next_item_to_start = next_item_to_start + 1
+    return all_items
+
+
+# repeatable results
+np.random.seed(45)
+days = 100
+cards = get_cards(days)
+all_items = fill_start_end(cards)
+
+# EP: a bit misleading to init all_items with lenth of days
+#     if max tasks you work on number of b's generated
+assert sum(all_items["Start_Day"] >= 0) < len([c for c in cards if c == "b"])
+
+# dump to CSV
 all_items.to_csv("randomSample")
 
 

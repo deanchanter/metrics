@@ -1,20 +1,10 @@
-[]  #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul  3 09:21:01 2020
-
-@author: deanchanter
-
-This is simple simulation script that gives the user a way to generate sample 
+"""This is simple simulation script that gives the user a way to generate sample 
 data for development of agile metrics in other enviroments.
 
 The core (of will be func'ed out in the future) is a simulation of picking 
 Red and Black cards to decided if a item can make progress.  At the end of 
-100 "days"  it writes and CSV and to the clipboard. It also creates simple 
+100 "days" it writes and CSV and to the clipboard. It also creates simple 
 plot to show what a cycle time and throughput chart might look like.
-
-
-
 """
 
 # Python code for 1-D random walk.

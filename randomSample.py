@@ -5,6 +5,17 @@
 Created on Fri Jul  3 09:21:01 2020
 
 @author: deanchanter
+
+This is simple simulation script that gives the user a way to generate sample 
+data for development of agile metrics in other enviroments.
+
+The core (of will be func'ed out in the future) is a simulation of picking 
+Red and Black cards to decided if a item can make progress.  At the end of 
+100 "days"  it writes and CSV and to the clipboard. It also creates simple 
+plot to show what a cycle time and throughput chart might look like.
+
+
+
 """
 
 # Python code for 1-D random walk. 
@@ -33,7 +44,7 @@ wipLimit = 3
 #repeatable results
 np.random.seed(45)  #23,45,10 
 
-
+#TODO : func this for use in WIPStudy and others.
    
 for day in range(days) :
     #same odds as a deck of cards: black = no progress (start something ) new
@@ -62,39 +73,31 @@ all_items.to_csv("randomSample")
 all_items.to_clipboard()                                   
                            
 
-#plot to check                          
-all_items['Cycle_Time'] = all_items["End_Day"] - all_items["Start_Day"]  + 1 
-                                            
+  
+#Build a Cycle Time Slice (End Day - Start Day for each Item/Index)                       
+all_items['Cycle_Time'] = all_items["End_Day"] - all_items["Start_Day"]  + 1                                           
 all_items_done = all_items[all_items['Cycle_Time'] > 1 ]
 
 
-
+#Build a Throuphout Slice (Count of Items the Ended for a given week)
 throughput = all_items_done.copy()[['End_Day']]
-
 throughput['Week'] = throughput["End_Day"].floordiv(7) + 1
-
 throughput_week = throughput.groupby('Week')['End_Day'].count()
 
+#Running Total Throughput
 throughtputRunning = throughput.groupby('Week').count().cumsum()
-
 throughtputRunning.rename(columns={'End_Day': "Running_Total"}, inplace=True)
 
 
-print(throughtputRunning)
 
 
+#plot for reference
+#Throughtput plot
 fig, (ax1, ax2) = plt.subplots(2,1, sharex=True)
-
-
-
-tr = throughtputRunning.plot(ax=ax2)
-
-
-                                                
 throughput_week.plot.bar(ax = ax1, title = 'Throughtput')
-#fig =bar.get_figure()
+throughtputRunning.plot(ax=ax2)
 
-
+#Cycle Time Plot                                            
 all_items_done.plot.scatter(x='End_Day', y='Cycle_Time')
 
 

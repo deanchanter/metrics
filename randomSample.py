@@ -16,6 +16,7 @@ import pandas as pd
 # - Do not write to clipboard, maybe  ause had some thign usefule there
 # - Do not leave commented code, delete it
 # - Try not to mix zero-based days transform and increase operation
+# - Try making it explicit what you are calculating and give it a proper name
 
 
 def get_cards(days: int):
@@ -30,7 +31,7 @@ def get_cards(days: int):
 
 
 def fill_start_end(cards, wipLimit=3):
-    next_item_to_start = 0
+    next_item_to_start = 1
     next_item_to_end = 0
     wip = 0
     all_items = pd.DataFrame(

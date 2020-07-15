@@ -1,5 +1,4 @@
-[
- ]#!/usr/bin/env python3
+[]  #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jul  3 09:21:01 2020
@@ -19,10 +18,10 @@ and Quequed work (item not done but in progress at the end of 100 days )
 
 """
 
-# Python code for 1-D random walk. 
-#import random 
-import numpy as np 
-import matplotlib.pyplot as plt 
+# Python code for 1-D random walk.
+# import random
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -75,6 +74,9 @@ all_items = all_items[all_items['WIP_Limit'] > 0 ]
 
 
 
+# dump master to CSV/Clipboard
+# all_items.to_csv("randomSample")
+# all_items.to_clipboard()
 
 #build Cycle Time Slice 
 #TODO one line this                    

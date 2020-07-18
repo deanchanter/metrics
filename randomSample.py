@@ -10,79 +10,60 @@ plot to show what a cycle time and throughput chart might look like.
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-
-# Ideas/recommendations:
-# - Item is such a generic name, try avoid it and come up with a name what item is
-# - Do not write to clipboard, maybe  ause had some thign usefule there
-# - Do not leave commented code, delete it
-# - Try not to mix zero-based days transform and increase operation
-# - Try making it explicit what you are calculating and give it a proper name
+from getTask import getTasks
 
 
-def get_cards(days: int):
-    # TODO: rewrite docstring - what func returns and what it means
-    """
-    # same odds as a deck of cards: 
-    # black = no progress (start something) new
-    # red = finish something 
-    # (This is the same logic as a 1 person 1 WIP Featureban)
-    """
-    return [np.random.choice(["b", "r"]) for _ in range(days)]
+finished_tasks, not_finshed_tasks = getTasks(100,10)
 
 
-def fill_start_end(cards, wipLimit=3):
-    next_item_to_start = 1
-    next_item_to_end = 0
-    wip = 0
-    all_items = pd.DataFrame(
-        -1, index=range(len(cards)), columns=["Start_Day", "End_Day"]
-    )
-    for day, card in enumerate(cards):
-        if card == "r" and wip > 0:
-            all_items["End_Day"][next_item_to_end] = day
-            wip = wip - 1
-            next_item_to_end = next_item_to_end + 1
-        elif card == "b" and wip < wipLimit:
-            all_items["Start_Day"][next_item_to_start] = day
-            wip = wip + 1
-            next_item_to_start = next_item_to_start + 1
-    return all_items
 
-
-# repeatable results
-np.random.seed(45)
-days = 100
-cards = get_cards(days)
-all_items = fill_start_end(cards)
-
-# EP: a bit misleading to init all_items with lenth of days
-#     if max tasks you work on number of b's generated
-assert sum(all_items["Start_Day"] >= 0) < len([c for c in cards if c == "b"])
 
 # dump to CSV
-all_items.to_csv("randomSample")
+finished_tasks.to_csv("randomSample")
 
 
 # Build a Cycle Time Slice (End Day - Start Day for each Item/Index)
-all_items["Cycle_Time"] = all_items["End_Day"] - all_items["Start_Day"] + 1
-all_items_done = all_items[all_items["Cycle_Time"] > 1]
+finished_tasks["Cycle_Time"] = finished_tasks["day_ended"] - finished_tasks["day_started"] + 1
 
 
 # Build a Throuphout Slice (Count of Items the Ended for a given week)
-throughput = all_items_done.copy()[["End_Day"]]
-throughput["Week"] = throughput["End_Day"].floordiv(7) + 1
-throughput_week = throughput.groupby("Week")["End_Day"].count()
+throughput = pd.DataFrame(finished_tasks["day_ended"].floordiv(7) + 1)
+throughput = throughput.reset_index()
+throughput.columns=["Task#","Week"]
+throughput = pd.DataFrame(throughput.groupby("Week")["Task#"].count())
+throughput.columns=['Weekly Throughput']
 
 # Running Total Throughput
-throughtputRunning = throughput.groupby("Week").count().cumsum()
-throughtputRunning.rename(columns={"End_Day": "Running_Total"}, inplace=True)
+throughput["Running Total Throuphput"] = throughput['Weekly Throughput'].cumsum()
 
 
 # plot for reference
 # Throughtput plot
-fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
-throughput_week.plot.bar(ax=ax1, title="Throughtput")
-throughtputRunning.plot(ax=ax2)
+fig, axes = plt.subplots(2, 2)
+fig.tight_layout()
+throughput["Weekly Throughput"].plot.bar(ax=axes[0,0])
+throughput["Running Total Throuphput"].plot(ax=axes[1,0])
 
 # Cycle Time Plot
-all_items_done.plot.scatter(x="End_Day", y="Cycle_Time")
+
+finished_tasks.plot.scatter(x="day_ended", y="Cycle_Time" ,ax=axes[0,1])
+
+
+#make an aging slice
+
+not_finshed_tasks.columns=["day_started"]
+
+not_finshed_tasks["days_old"] = 100 -  not_finshed_tasks["day_started"]
+not_finshed_tasks.index.name='task#'
+print(not_finshed_tasks)
+
+lefts = not_finshed_tasks['day_started'].to_list()
+
+#lefts=[1,2,3]
+
+not_finshed_tasks["days_old"].plot.barh(ax=axes[1,1],legend=False, left=lefts)
+
+
+
+
+

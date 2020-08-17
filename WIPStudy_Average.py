@@ -75,7 +75,7 @@ for limit in limit_list:
     cycletime_maxdf[limit] = ctmaxlist
     running_wipdf[limit] = rwiplist
    
-print(running_wipdf)
+
 
 cycletimedf.to_csv('ct.csv')
 throughtputdf.to_csv('tp.csv')

@@ -23,13 +23,13 @@ from getTask import getTaskstoFinish
 
 
 
-runs = 100
+runs = 100000
 
-limit_list= [3,5,7,11,13]
+limit_list= [3,5,7,11,13,21]
 
 
 cycletimedf = pd.DataFrame()
-throughtputdf = pd.DataFrame()
+throughputdf = pd.DataFrame()
 cycletime_maxdf = pd.DataFrame()
 running_wipdf = pd.DataFrame()
 time_to_completedf= pd.DataFrame()
@@ -70,7 +70,7 @@ for limit in limit_list:
         
         
     cycletimedf[limit] = ctavglist
-    throughtputdf[limit] = tptlist
+    throughputdf[limit] = tptlist
     time_to_completedf[limit] = timetoclist
     cycletime_maxdf[limit] = ctmaxlist
     running_wipdf[limit] = rwiplist
@@ -78,10 +78,10 @@ for limit in limit_list:
 
 
 cycletimedf.to_csv('ct.csv')
-throughtputdf.to_csv('tp.csv')
+throughputdf.to_csv('tp.csv')
 cycletime_maxdf.to_csv('ctmax.csv')
-time_to_completedf.to_csv('avgtp.csv')
-running_wip.to_csv('wip.csv')
+time_to_completedf.to_csv('time.csv')
+running_wipdf.to_csv('wip.csv')
 
 
 ct = cycletimedf.plot.hist(alpha=.5, bins=25)
@@ -90,7 +90,7 @@ ct.set(title="Cycle Time",xlabel="Average Cycle Time (Days)")
 ttc = time_to_completedf.plot.hist(alpha=.6)
 ttc.set(title= "Time to Complete", xlabel="Total # of Days to Complete all items")
 
-tp = throughtputdf.plot.hist(alpha=.6)
+tp = throughputdf.plot.hist(alpha=.6)
 tp.set(title= "Throughput", xlabel=" Average # of Items per Day")
 
 ctm = cycletime_maxdf.plot.hist(alpha=.6)

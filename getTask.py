@@ -76,7 +76,6 @@ def getTaskstoFinish(wip_limit, seed = None, tasks=27, people=4):
             #print("Day", day, "Tasks in queue:", current_stack)
             stacks.append(current_stack.copy())  
         running_wip.append(len(current_stack))
-        day = day + 1
     # end of function
     
     # previously was 'all_items'
